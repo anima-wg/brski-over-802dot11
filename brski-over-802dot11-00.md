@@ -315,17 +315,20 @@ The device discovers and connects to a network enforcing 802.1X EAP-BRSKI. A hig
 - if the device does not have an LDevID, or certificate_authorities prevents it using its LDevID, then the device uses its IDevID to establish the TLS tunnel 
 - if certificate_authorities prevents the device from using its IDevID (and its LDevID if it has one) then the device fails to connect
 
-The EAP server continues with TLS tunnel establishment.
+The EAP server continues with TLS tunnel establishment:
+
 - if the device certificate is invalid or expired, then the EAP server fails the connection request. 
 - if the device certificate is valid but is not allowed due to a configured policy on the EAP server, then the EAP server fails the connection request
 - if the device certificate is accepted, then the EAP server establishes the TLS tunnel and starts the tunneled EAP-BRSKI procedures
 
-At this stage, the EAP server has some policy decisions to make.
+At this stage, the EAP server has some policy decisions to make:
+
 - if network policy indicates that the device certificate is sufficient to grant network access, whether it is an LDevID or an IDevID, then the EAP server simply initiates the Crypto-Binding TLV and 'Success' Result TLV exchange. The device can now obtain an IP address and connect to the network.
 - if the device certificate is an LDevID, the EAP server may instruct the device via a new EAP TLV to do an {{?RFC7030}} EST 'simplereenroll' using its LDevID. Assuming the 'simplereenroll' completes successfully, the EAP server completes the exchange by initiating the Crypto-Binding TLV and 'Success' Result TLV exchange.
 - the EAP server may instruct the device to initialise a full BRSKI flow. Typically, the EAP server will instruct the device to initialize a BRSKI flow when it presents an IDevID, however, the EAP server may instruct the device to initialize a BRSKI flow even if it presented a valid LDevID. The device sends all BRSKI messages, for example 'requestvoucher', inside the TLS tunnel using new EAP TLVs. Assuming the BRSKI flow completes successfully and the device is issued an LDevID, the EAP server completes the exchange by initiating the Crypto-Binding TLV and 'Success' Result TLV exchange.
 
 Once the EAP flow has successfully compelted, then:
+
 - network policy will automatically assign the device to the correct network segment
 - the device obtains an IP address
 - the device can access production service
