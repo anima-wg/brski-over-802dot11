@@ -38,7 +38,7 @@ informative:
       org: Internet Assigned Numbers Authority
     title: Service Name and Transport Protocol Port Number Registry
     target: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
-    
+
   calculator:
     author:
       org: Revolution Wi-Fi
@@ -98,7 +98,7 @@ informative:
         name: IEEE
         org: IEEE
     date: 2017
-    
+
 --- abstract
 
 This document outlines the challenges associated with implementing Bootstrapping Remote Secure Key Infrastructures over 802.11 and 802.1x networks. Multiple options are presented for discovering and authenticating to the correct 802.11 SSID. This initial draft is a  discussion document and no final recommendations are made on the recommended approaches to take.
@@ -281,7 +281,7 @@ To be completed..
 
 ## PSK Pre-BRSKI and 802.1X EAP-TLS Post-BRSKI
 
-The device connects to a network enforcing PSK pre-BRSKI. The mechanism by which the PSK is provisioned on the device for pre-BRSKI authentication is out-of-scope of this version of this document. The device connects to a network enforcing 802.1X EAP-TLS post-BRSKI. The device uses the LDevID obtained via BRSKI as the post-BRSKI 802.1X credential. 
+The device connects to a network enforcing PSK pre-BRSKI. The mechanism by which the PSK is provisioned on the device for pre-BRSKI authentication is out-of-scope of this version of this document. The device connects to a network enforcing 802.1X EAP-TLS post-BRSKI. The device uses the LDevID obtained via BRSKI as the post-BRSKI 802.1X credential.
 
 When the device connects to the post-BRSKI network that is enforcing 802.1X EAP-TLS, the device uses its LDevID as its credential. The device should verify the certificate presented by the server during that EAP-TLS exchange against the trusted CA list it obtained during BRSKI.
 
@@ -312,12 +312,12 @@ The device discovers and connects to a network enforcing 802.1X EAP-BRSKI. A hig
 - Device starts the EAP flow by sending the EAP TLS ClientHello message
 - EAP server replies and includes CertificateRequest message, and may specify certificate_authorities in the message
 - if the device has an LDevID and the LDevID issuing CA is allowed by the certificate_authorities list (i.e. the issuing CA is explicitly included in the list, or else the list is empty) then the device uses its LDevID to establish the TLS tunnel
-- if the device does not have an LDevID, or certificate_authorities prevents it using its LDevID, then the device uses its IDevID to establish the TLS tunnel 
+- if the device does not have an LDevID, or certificate_authorities prevents it using its LDevID, then the device uses its IDevID to establish the TLS tunnel
 - if certificate_authorities prevents the device from using its IDevID (and its LDevID if it has one) then the device fails to connect
 
 The EAP server continues with TLS tunnel establishment:
 
-- if the device certificate is invalid or expired, then the EAP server fails the connection request. 
+- if the device certificate is invalid or expired, then the EAP server fails the connection request.
 - if the device certificate is valid but is not allowed due to a configured policy on the EAP server, then the EAP server fails the connection request
 - if the device certificate is accepted, then the EAP server establishes the TLS tunnel and starts the tunneled EAP-BRSKI procedures
 
