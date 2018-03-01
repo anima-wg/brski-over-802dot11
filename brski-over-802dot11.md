@@ -1,6 +1,6 @@
 ---
 
-title: "BRSKI over 802.11"
+title: "BRSKI over IEEE 802.11"
 abbrev: BRSKI-WIFI
 docname: draft-friel-brski-over-802dot11-00
 category: std
@@ -101,7 +101,7 @@ informative:
 
 --- abstract
 
-This document outlines the challenges associated with implementing Bootstrapping Remote Secure Key Infrastructures over 802.11 and 802.1x networks. Multiple options are presented for discovering and authenticating to the correct 802.11 SSID. This initial draft is a  discussion document and no final recommendations are made on the recommended approaches to take.
+This document outlines the challenges associated with implementing Bootstrapping Remote Secure Key Infrastructures over IEEE 802.11 and IEEE 802.1x networks. Multiple options are presented for discovering and authenticating to the correct IEEE 802.11 SSID. This initial draft is a  discussion document and no final recommendations are made on the recommended approaches to take.
 
 --- middle
 
@@ -111,7 +111,7 @@ Bootstrapping Remote Secure Key Infrastructures (BRSKI) {{?I-D.ietf-anima-bootst
 
 > allows for alignment with 802.1X network access control methods, its use here is for Pledge authentication rather than network access control. Integrating this protocol with network access control, perhaps as an Extensible Authentication Protocol (EAP) method (see {{?RFC3748}}, is out-of-scope.
 
-The draft does not describe any mechanisms for how a wi-fi enabled device would discover and select a suitable [IEEE802.11] SSID when multiple SSIDs are available. A typical deployment scenario could involve a device begin deployed in a location were twenty or more SSIDs are being broadcast, for example, in a multi-tenanted building or campus where multiple independent organizations operate wi-fi networks.
+The draft does not describe any mechanisms for how an [IEEE802.11] enabled device would discover and select a suitable [IEEE802.11] SSID when multiple SSIDs are available. A typical deployment scenario could involve a device begin deployed in a location were twenty or more SSIDs are being broadcast, for example, in a multi-tenanted building or campus where multiple independent organizations operate [IEEE802.11] networks.
 
 In order to reduce the administrative overhead of installing new devices, it is desirable that the device will automatically discover and connect to the correct SSID without the installer having to manually provision any network information or credentials on the device. It is also desirable that the device does not discover, connect to, and automatically enroll with the wrong network as this could result in a device that is owned by one organization connecting to the network of a different organization in a multi-tenanted building or campus.
 
@@ -125,7 +125,7 @@ This document outlines multiple different potential mechanisms that would enable
 
 ANQP: Access Network Query Protocol
 
-AP: Wi-Fi Access Point
+AP: IEEE 802.11 Access Point
 
 CA: Certificate Authority
 
@@ -133,7 +133,7 @@ EAP: Extensible Authentication Protocol
 
 EST: Enrollment over Secure Transport
 
-HotSpot 2.0 / HS2.0: Wi-Fi Alliance standard that enables cell phones to roam seamlessly between cellular and wi-fi networks.
+HotSpot 2.0 / HS2.0: Wi-Fi Alliance standard that enables cell phones to roam seamlessly between cellular and IEEE 802.11 networks.
 
 IDevID: Initial Device Identifier
 
@@ -141,7 +141,7 @@ LDevID: Locally Significant Device Identifier
 
 SSID: 802.11 Service Set Identifier
 
-STA: Wi-Fi station
+STA: IEEE 802.11 station
 
 WLC: Wireless LAN Controller
 
@@ -357,7 +357,7 @@ Once the EAP flow has successfully compelted, then:
 
 ## 802.11i
 
-802.11i-2004 is an IEEE standard from 2004 that improves connection security. 802.11i defines the Robust Security Network IE which includes information on:
+802.11i-2004 is an IEEE standard from 2004 that improves connection security. 802.11i-2004 is incorporated into 802.11-2014. 802.11i defines the Robust Security Network IE which includes information on:
 
 - Pairwise Cipher Suites (WEP-40, WEP-104, CCMP-128, etc.)
 - Authentication and Key Management Suites (PSK, 802.1X, etc.)
@@ -380,7 +380,7 @@ The Interworking IE includes information on:
 
 ANQP defines these key IEs for enabling the STA to determine which network to connect to:
 
-- Roaming consortium IE: includes the Organization Identifier(s) of the roaming consortium(s). The OI is typically  provisioned on cell phones by the SP, so the cell phone can automatically detect wi-fi networks that provide access to its SP's consortium.
+- Roaming consortium IE: includes the Organization Identifier(s) of the roaming consortium(s). The OI is typically  provisioned on cell phones by the SP, so the cell phone can automatically detect 802.11 networks that provide access to its SP's consortium.
 
 - 3GPP Cellular Network IE: includes the Mobile Country Code (MCC) and Mobile Network Code (MNC) of the SP the AP provides access to.
 
