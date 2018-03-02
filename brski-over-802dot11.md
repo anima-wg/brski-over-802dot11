@@ -169,7 +169,7 @@ Device manufacturers would bake the well-known prefix string and character delim
 
 If multiple SSIDs are available with this prefix, then the device could simply round robin through these SSIDs and attempt to start the BRSKI flow on each one in turn until it succeeds.
 
-This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery-mitigations}} - it does nothing to prevent a device enrolling against the same network.
+This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against the same network.
 
 Another issue with defining a specific naming convention for the SSID is that this may require network operators to have to deploy a new SSID. In general, network operators attempt to keep the number of unique SSIDs deployed to a minimum as each deployed SSID eats up a percentage of available air time and network capacity. A good discussion of SSID overhead and an SSID overhead [calculator] is available.
 
@@ -186,7 +186,7 @@ Bloom filters simply serve to reduce the size of Beacon and Probe Response frame
 
 If BRSKI were to leverage 802.11aq, then the 802.11aq specification would need to be pushed and supported, and a BRSKI service would need to be defined in [IANA].
 
-This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery-mitigations}} - it does nothing to prevent a device enrolling against the same network.
+This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against the same network.
 
 ## 802.11u NAI Realm
 
@@ -200,7 +200,7 @@ Leveraging NAI Realm would not require any 802.11 specification changes, and cou
 
 Additionally (or alternatively...) as NAI Realm includes advertising the EAP mechanism required, if a new EAP-BRSKI were to be defined, then this could be advertised. Devices could then scan for an NAI Realm that enforced EAP-BRSKI, and ignore the realm name.
 
-This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery-mitigations}} - it does nothing to prevent a device enrolling against the same network.
+This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against the same network.
 
 Additionally, as the IEEE is attempting to standardize logical service advertisement via 802.11aq, 802.11aq would seem to be the more appropriate option than overloading NAI Realm. However, it is worth noting that configuring of NAI Realms is supported today by WLCs.
 
