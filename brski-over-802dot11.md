@@ -149,14 +149,9 @@ WLC: Wireless LAN Controller
 
 This section outlines multiple different mechanisms that could potentially be leveraged that would enable a bootstrapping device to choose between multiple different available 802.11 SSIDs. As noted previously, this draft does not make any final recommendations.
 
-## Incorrect SSID Discovery Mitigations
+## Incorrect SSID Discovery
 
 As will be seen in the following sections, there are several discovery options where the deivce can choose an incorrect SSID and attempt to join the wrong network. For example, the device is being deployed by one organization in a multi-tenant campus, and chooses to connect to the SSID of a different organization. The device is dependent upon the incorrect network rejecting its BRSKI enrollment attempt. It is possible that the device could end up enrolled with the wrong network.
-
-In the situation where multiple SSIDs are located, the device will attempt to bootstrap onto each until success. BRSKI supports a model where the network domain can "claim" ownership of a bootstrapping device. This could result in the "wrong" network managing the device. Mitigations include:
-
-- BRSKI allows optional sales channel integration which could be used to ensure only the "correct" network can claim the device; although this would require wireless device manufacturers to incorporate sales channel integration.
-- A "prior claim" method leveraging sale channel integration or a simple knowledge assertion of the future device id could be used. For example the user deploying the device uses a BRSKI MASA web page/API to assert the domain id for the device. This could be required before any MASA voucher distribution.
 
 ## Well-known BRSKI SSID
 
@@ -191,7 +186,7 @@ Bloom filters simply serve to reduce the size of Beacon and Probe Response frame
 
 If BRSKI were to leverage 802.11aq, then the 802.11aq specification would need to be pushed and supported, and a BRSKI service would need to be defined in [IANA].
 
-802.11aq based SSID discovery suffers from the same potential issue as Well-known BRSKI SSID: it does nothing to prevent a device from enrolling against the wrong network.
+This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery-mitigations}} - it does nothing to prevent a device enrolling against the same network.
 
 ## 802.11u NAI Realm
 
@@ -201,11 +196,11 @@ Note that today some WLCs tie 802.11u configuration to HS2.0 configuration i.e. 
 
 The key conceptual difference with this NAI Realm proposal is that BRSKI uses this special realm name more as a logical service advertisement rather than as a backhaul internet provider advertisement. Leveraging the NAI Realm to advertise a service is conceptually very similar to what 802.11aq is attempting to achieve.
 
-Leveraging NAI Realm would not require any 802.11 specification changes, and could be defined by this IETF draft. Device manufacturers would bake the well-known NAI Realm string into device firmware. Network operators configuring SSIDs which offer BRSKI services would have to ensure that the SSID offered an NAI Realm with this specific name. On bootstrap, the device would scan all available SSIDs and use ANQP to query for NAI Realms matching the BRSKI service name.
+Leveraging NAI Realm would not require any 802.11 specification changes, and could be defined by this IETF draft. Note that the author's are not aware of any currently defined IETF or IANA namespaces that define NAI Realms. Device manufacturers would bake the well-known NAI Realm string into device firmware. Network operators configuring SSIDs which offer BRSKI services would have to ensure that the SSID offered an NAI Realm with this specific name. On bootstrap, the device would scan all available SSIDs and use ANQP to query for NAI Realms matching the BRSKI service name.
 
 Additionally (or alternatively...) as NAI Realm includes advertising the EAP mechanism required, if a new EAP-BRSKI were to be defined, then this could be advertised. Devices could then scan for an NAI Realm that enforced EAP-BRSKI, and ignore the realm name.
 
-Again, 802.11u NAI Realm suffers from the same limitations as 802.11aq and Well-known BRSKI SSID: it does nothing to prevent a device from enrolling against the wrong network.
+This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery-mitigations}} - it does nothing to prevent a device enrolling against the same network.
 
 Additionally, as the IEEE is attempting to standardize logical service advertisement via 802.11aq, 802.11aq would seem to be the more appropriate option than overloading NAI Realm. However, it is worth noting that configuring of NAI Realms is supported today by WLCs.
 
