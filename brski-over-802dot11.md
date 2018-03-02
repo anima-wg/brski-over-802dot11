@@ -2,7 +2,7 @@
 
 title: "BRSKI over IEEE 802.11"
 abbrev: BRSKI-WIFI
-docname: draft-friel-brski-over-802dot11-00
+docname: draft-friel-brski-over-802dot11
 category: std
 
 stand_alone: yes
