@@ -2,7 +2,7 @@
 
 title: "BRSKI over IEEE 802.11"
 abbrev: BRSKI-WIFI
-docname: draft-friel-brski-over-802dot11-01
+docname: draft-friel-anima-brski-over-802dot11-00
 category: info
 
 stand_alone: yes
@@ -20,10 +20,10 @@ author:
     org: Cisco
     email: lear@cisco.com
  -
-    ins: M. Pritikin
-    name: Max Pritikin
+    ins: J. Henry
+    name: Jerome Henry
     org: Cisco
-    email: pritikin@cisco.com
+    email: jerhenry@cisco.com
  -
     ins: M. Richardson
     name: Michael Richardson
@@ -109,7 +109,7 @@ informative:
 
 --- abstract
 
-This document outlines the challenges associated with implementing Bootstrapping Remote Secure Key Infrastructures over IEEE 802.11 and IEEE 802.1x networks. Multiple options are presented for discovering and authenticating to the correct IEEE 802.11 SSID. This initial draft is a  discussion document and no final recommendations are made on the recommended approaches to take.
+This document outlines the challenges associated with implementing Bootstrapping Remote Secure Key Infrastructures over IEEE 802.11 and IEEE 802.1x networks. Multiple options are presented for discovering and authenticating to the correct IEEE 802.11 SSID. This draft is a  discussion document and no final recommendations are made on the recommended approaches to take. However, the advantages and downsides of each possible method are evaluated.
 
 --- middle
 
@@ -125,7 +125,7 @@ In order to reduce the administrative overhead of installing new devices, it is 
 
 Additionally, as noted above, the BRSKI draft does not describe how BRSKI could potentially align with [IEEE802.1X] authentication mechanisms.
 
-This document outlines multiple different potential mechanisms that would enable a bootstrapping device to choose between different available [IEEE802.11] SSIDs in order to execute the BRSKI flow. This document also outlines several options for how [IEEE802.11] networks enforcing [IEEE802.1X] authentication could enable the BRSKI flow, and describes the required device behaviour.
+This document outlines multiple different potential mechanisms that would enable a bootstrapping device to choose between different available [IEEE802.11] SSIDs in order to associate and execute the BRSKI flow. This document also outlines several options for how [IEEE802.11] networks enforcing [IEEE802.1X] authentication could enable the BRSKI flow, and describes the required device behaviour.
 
 This document presents both [IEEE802.11] mechanisms and Wi-Fi Alliance (WFA) mechanisms. An important consideration when determining what the most appropriate solution to device onboarding should be is what bodies need to be involved in standardisation efforts: IETF, IEEE and/or WFA.
 
@@ -173,7 +173,7 @@ WPS: Wi-Fi Protected Setup
 
 ## Incorrect SSID Discovery
 
-As will be seen in the following sections, there are several discovery scenarios where the device can choose an incorrect SSID and attempt to join the wrong network. For example, the device is being deployed by one organization in a multi-tenant building, and chooses to connect to the SSID of a neighbor organization. The device is dependent upon the incorrect network rejecting its BRSKI enrollment attempt. It is possible that the device could end up enrolled with the wrong network.
+As will be seen in the following sections, there are several discovery scenarios where the device can choose an incorrect SSID and attempt to join the wrong network. For example, the device is being deployed by one organization in a multi-tenant building, and chooses to connect to the SSID of a neighbor organization. The device is dependent upon either detecting that the other networks are unwanted candidates, or upon the incorrect networks rejecting its BRSKI enrollment attempt. It is possible that the device could end up enrolled with the wrong network. It is also possible that the device will waste time before identifying and joining the correct network.
 
 ### Leveraging BRSKI MASA
 
@@ -187,7 +187,8 @@ An alternative to sales channel integration is to provide the device owners with
 
 #### Detection
 
-If a device connects to the wrong network, the correct network operator could detect this after the fact by integration with MASA and checking audit logs for the device. The MASA audit logs should indicate all networks that have been issued vouchers for a specific device. This mechanism also relies on the correct network operater having a list, bill or materials, or similar of all device identities that should be connecting to their network in order to check MASA logs for devices that have not come online, but are known to be physically deployed.
+If a device connects to the wrong network, the correct network operator could detect this incorrect association after the fact by integration with MASA and checking audit logs for the device. The MASA audit logs should indicate all networks that have been issued vouchers for a specific device. This mechanism also relies on the correct network operator having a list, bill or materials, or similar of all device identities that should be connecting to their network in order to check MASA logs for devices that have not come online, but are known to be physically deployed.
+
 
 ### Relying on the Network Administrator
 
@@ -195,24 +196,30 @@ An obvious mechanism is to rely on network administrators to be good citizens an
 
 - Some network administrators will configure an open policy on their network. Any device that attempts to connect to the network will be automatically granted access.
 
-- Some network administrators will be bad actors and will intentionally attempt to onboard devices that they do not own but that are in range of their networks.
+- Some network administrators will be bad actors and will accept the onboarding of devices that they do not own but that are in range of their networks.
 
 ### Requiring the Network to Demonstrate Knowledge of Device
 
-Protocols such as the WFA Device Provisioning Profile [DPP] require that a network provisoining entity demonstrate knowledge of device information such as the device's bootstrapping public key prior to the device attempting to connect to the network. This gives a higher level of confidence to the device that it is connecting to the correct SSID. These mechanisms could leverage a key that is printed on the device label, or included in a sales channel bill of materials. The security of these types of key distribution mechanisms relies on keeping the device label or bill of materials content from being compromised prior to device installation.
+Technologies such as the WFA Easy Connect (also known as Device Provisioning Profile [DPP]) require that a network provisoining entity demonstrates knowledge of device information such as the device's bootstrapping public key prior to the device attempting to connect to the network. This gives a higher level of confidence to the device that it is connecting to the correct SSID. These mechanisms could leverage a key that is printed on the device label, or included in a sales channel bill of materials. The security of these types of key distribution mechanisms relies on keeping the device label or bill of materials content from being compromised prior to device installation.
+
+[IEEE802.11] also includes several advertisement mechanisms that could allow the device to exchange information with the wireless infrastructure. Examples are provided throughout this text. Such exchange can be added to, or integrated with, the standard [IEEE802.11] discovery mechanisms to allow the device to discard the networks that would not provide information showing that the network knows the device. Similarly, the network could reject the association of devices that would fail to show particular indicators related to their credentials. 
 
 ## IEEE 802.11 Authentication Mechanisms
 
-[IEEE802.11i] allows an SSID to advertise different authentication mechanisms via the AKM Suite list in the RSNE. A very brief introduction to [IEEE802.11i] is given in the appendices. An SSID could advertise PSK or [IEEE802.1X] authentication mechanisms. When a network operator needs to enforce two different authentication mechanisms, one for pre-BRSKI devices and one for post-BRSKI devices, the operator has two options:
+[IEEE802.11i] allows an SSID to advertise different authentication mechanisms via the AKM Suite list in the RSNE. A very brief introduction to [IEEE802.11i] is given in the appendices. An SSID could advertise PSK or [IEEE802.1X] authentication mechanisms. When a network operator needs to enforce two different authentication mechanisms, one for pre-BRSKI devices and one for post-BRSKI devices, the operator has four options:
 
 - configure two SSIDs with the same SSID string value, each one advertising a different authentication mechanism
 - configure two different SSIDs, each with its own SSID string value, with each one advertising a different authentication mechanism
+- configure a single SSID, advertising two different authentication mechansim in the RSNE
+- configure a single SSID, advertising a general authentication mechanism in the RSNE, and particular additional authentication options in some other information element.
 
-If devices have to be flexible enough to handle both options, then this adds complexity to the device firmware and internal state machines. Similarly, if network infrastructure (APs, WLCs, AAAs) potentially needs to support both options, then this adds complexity to  network infrastructure configuration flexibility, software and state machines. Consideration must be given to the practicalities of implementation for both devices and network infrastructure when designing the final bootstrap mechanism and aligning [IEEE802.11], [IEEE802.1X] and BRSKI protocol interactions.
+If devices have to be flexible enough to handle two of more of these options, then this adds complexity to the device firmware and internal state machines. Similarly, if network infrastructure (APs, WLCs, AAAs) potentially needs to support all options, then this adds complexity to  network infrastructure configuration flexibility, software and state machines. Consideration must be given to the practicalities of implementation for both devices and network infrastructure when designing the final bootstrap mechanism and aligning [IEEE802.11], [IEEE802.1X] and BRSKI protocol interactions. As such, a mechanism that allows for the coexistence of pre-BRSKI and post-BRSKI authentication on the same SSID is likely to be preferred. 
 
-Devices should be flexible enough to handle potential options defined by any final draft. When discovering a pre-BRSKI SSID, the device should also discover the authentication mechanism enforced by the SSID that is advertising BRSKI support. If the device supports the authentication mechanism being advertised, then the device can connect to the SSID in order to initiate the BRSKI flow. For example, the device may support [IEEE802.1X] as a pre-BRSKI authentication mechanism, but may not support PSK as a pre-BRSKI authentication mechanism.
+### Authentication Signaling Considerations
 
-Once the device has completed the BRKSI flow and has obtained an LDevID, a mechanism is needed to tell the device which SSID to use for post-BRSKI network access. This may be a different SSID to the pre-BRSKI SSID. The mechanism by which the post-BRSKI SSID is advertised to the device is out-of-scope of this version of this document.
+Devices should be flexible enough to handle potential options defined by any final draft. When discovering a pre-BRSKI SSID, the device should also discover the authentication mechanisms enforced by the SSID. If the device supports the authentication mechanism being advertised, then the device can connect to the SSID in order to initiate the BRSKI flow. For example, the device may support [IEEE802.1X] as a pre-BRSKI authentication mechanism, but may not support PSK as a pre-BRSKI authentication mechanism.
+
+Once the device has completed the BRKSI flow and has obtained an LDevID, a mechanism is needed to tell the device which SSID to use for post-BRSKI network access. This may be the same SSID as the pre-BRSKI SSID, or another SSID. The decision in whether to onboard devices through the production SSID or use an onboarding and provisioning SSID that is different from the production SSID is dependent on individual organisation networking and security architectures. As such, the mechanism by which the post-BRSKI SSID is advertised to the device, if that SSID is different from the pre-BRSKI SSID, is out-of-scope of this version of this document.
 
 ### IP Address Assignment Considerations
 
@@ -220,11 +227,18 @@ If a device has to perform two different authentications, one for pre-BRSKI and 
 
 ## Client and Server Implementations
 
-When evaluating all possible SSID discovery mechanism and authentication mechanisms outlined in this document, consideration must be given to the complexity of the required client and server implementation and state machines. Consideration must also be given to the network operator configuration complexity if multiple permutations and combinations of SSID discovery and network authentication mechanisms are possible.
+When evaluating all possible SSID discovery mechanisms and authentication mechanisms outlined in this document, consideration must be given to the complexity of the required client and server implementation and state machines. Consideration must also be given to the network operator configuration complexity if multiple permutations and combinations of SSID discovery and network authentication mechanisms are possible.
 
-# Potential SSID Discovery Mechanisms
+# Potential SSID Discovery and Validation Mechanisms
 
-This section outlines multiple different mechanisms that could potentially be leveraged that would enable a bootstrapping device to choose between multiple different available [IEEE802.11] SSIDs. As noted previously, this draft does not make any final recommendations.
+This section outlines multiple different mechanisms that could potentially be leveraged that would enable a bootstrapping device to choose between multiple different available [IEEE802.11] SSIDs. The discovery mechanism needs to include the following steps:
+
+- A process for the bootstrapping device that has not completed the bootstrapping process, and that it is at a stage where such process is needed before further connection
+
+- A process for the Wi-Fi infrastructure to signal that it can perform bootstrapping
+
+- A process for the bootstrapping device and the infrastructure to validate each other request. This step includes, for the bootstrapping device, discriminating between two SSIDs in range. This step may also include, for the Wi-Fi infrastructure, validating the bootstrapping device's request (before accepting it).
+
 
 The discovery options outlined in this document include:
 
@@ -268,9 +282,11 @@ This mechanism suffers from the limitations outlined in {{incorrect-ssid-discove
 
 Another issue with defining a specific naming convention for the SSID is that this may require network operators to have to deploy a new SSID. In general, network operators attempt to keep the number of unique SSIDs deployed to a minimum as each deployed SSID eats up a percentage of available air time and network capacity. A good discussion of SSID overhead and an SSID overhead [calculator] is available.
 
+Additionally, a third issue with this mechanism is that the bootstrapping SSID might be different from the production SSID. As such, using this mechanism may force a network operator to maintain an SSID (with the overhead concerns detailed above) just for occasional boostrapping events. The SSID could be enabled only when bootstrapping events are expected, but this manual operation does not scale very well (and ignores cases where devices need to re-bootstrap or are introduced into the network individually at unpredictable intervals). Keeping the SSID enabled at all times consumes airtime for low added value outside of the bootstrapping events.
+
 ## IEEE 802.11aq
 
-[IEEE802.11aq] is currently being worked by the IEEE, but is not yet finalized, and is not yet supported by any vendors in shipping product. [IEEE802.11aq] defines new elements that can be included in [IEEE802.11] Beacon, Probe Request and Probe Response frames, and defines new elements for ANQP frames.
+[IEEE802.11aq] is an amedment to the [IEEE802.11] Standard that was published in August 2018. [IEEE802.11aq] defines new elements that can be included in [IEEE802.11] Beacon, Probe Request and Probe Response frames, and defines new elements for ANQP frames.
 
 The extensions allow an AP to broadcast support for backend services, where allowed services are those registered in the [IANA] Service Name and Transport Protocol Port Number Registry. The services can be advertised in [IEEE802.11] elements that include either:
 
@@ -279,9 +295,11 @@ The extensions allow an AP to broadcast support for backend services, where allo
 
 Bloom filters simply serve to reduce the size of Beacon and Probe Response frames when a large number of services are advertised. If a bloom filter is used by the AP, and a device discovers a potential service match in the bloom filter, then the device can query the AP for the full list of service name hashes using newly defined ANQP elements.
 
-If BRSKI were to leverage [IEEE802.11aq], then the [IEEE802.11aq] specification would need to be pushed and supported, and a BRSKI service would need to be defined in [IANA].
+If BRSKI were to leverage [IEEE802.11aq], then a BRSKI service would need to be defined in [IANA].
 
-This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against an incorrect network.
+[IEEE802.11aq] describes two types of exchanges. An unsollicited Preassociation Discovery (PAD) procedure, where the AP advertises services reachable through the AP, and a sollicited method, where the PAD is initated by the unassociated client attempting to discover a service offered through the AP and SSID. The unsollictited PAD method could be leveraged to advertise support for BRSKI. This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against an incorrect network.
+
+The sollicited method could be used by the device to query about general BRSKI support, or to request information about specific BRSKI modes or options. This method could be used to overcome the  {{incorrect-ssid-discovery}} issue.
 
 ## IEEE 802.11 Vendor Specific Information Element
 
@@ -291,10 +309,10 @@ This mechanism suffers from the limitations outlined in {{incorrect-ssid-discove
 
 [IEEE802.11u] defines mechanisms for interworking. An introduction to [IEEE802.11u] is given in the appendices. Existing IEs in [IEEE802.11u] include:
 
-- Roaming Consortium IE
+- Roaming Consortium IE (RCOI)
 - NAI Realm IE
 
-These existing IEs could be used to advertise a well-known, logical service that devices implicitly know to look for.
+These existing IEs could be used to advertise a well-known, logical service that devices implicitly know to look for. This may be implemented in the spirit of the 802.11u logic, where the NAI or the RCOI point to a specific set of service providers. This could also be implemented as a variation where the NAI or the RCOI point to a specific service, with no specific service provider identified in the IE.
 
 In the case of NAI Realm, a well-known service name such as "_bootstrapks" could be defined and advertised in the NAI Realm IE. In the case of Roaming Consortium, a well-known Organization Identifier (OI) could be defined and advertised in the Roaming Consortium IE.
 
@@ -302,13 +320,13 @@ Device manufacturers would bake the well-known NAI Realm or Roaming Consortium O
 
 The key concept with this proposal is that BRSKI uses a well-known NAI Realm name or Roaming Consortium OI more as a logical service advertisement rather than as a backhaul internet provider advertisement. This is conceptually very similar to what [IEEE802.11aq] is attempting to achieve.
 
-Leveraging NAI Realm or Roaming Consortium would not require any [IEEE802.11] specification changes, and could possibly be defined by this IETF draft. Note that the authors are not aware of any currently defined IETF or IANA namespaces that define NAI Realms or OIs. 
+Leveraging NAI Realm or Roaming Consortium would not require any [IEEE802.11] specification changes, and could be defined by this IETF draft with the strings suggested above for NAI. However, the RCOI has the format of a MAC address, and would need to be allocated by the IEEE. In the case where specific vendors would implement a specific NAI or RCOI, identifying both the vendor or vendor consortium and support for BRSKI, new NAI and RCOI would need to be defined by these vendors. Although the Wireless Broadband Alliance (WBA) keeps a Next generation Hotspot (NGH) registry of known RCOIs and NAIs, there is no official and exahsutive published repository of these values. 
 
-Additionally (or alternatively...) as NAI Realm includes advertising the EAP mechanism required, if a new EAP-BRSKI were to be defined, then this could be advertised. Devices could then scan for an NAI Realm that enforced EAP-BRSKI, and ignore the realm name.
+In addition to BRSKI support, as the NAI Realm includes advertising the EAP mechanism required, if a new EAP-BRSKI were to be defined, then this could be advertised. Devices could then scan for an NAI Realm that enforced EAP-BRSKI, and ignore the realm name.
 
 This mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against an incorrect network.
 
-Additionally, as the IEEE is attempting to standardize logical service advertisement via [IEEE802.11aq], [IEEE802.11aq] would seem to be the more appropriate option than overloading an existing IE. However, it is worth noting that configuration of these IEs is supported today by WLCs, and this mechanism may be suitable for demonstrations or proof-of-concepts.
+Additionally, as the IEEE is attempting to standardize logical service advertisement via [IEEE802.11aq], [IEEE802.11aq] would seem to be the more appropriate option than overloading an existing IE. However, it is worth noting that configuration of 802.11u IEs is commonly supported today by Wi-Fi infrastructure vendors, and this mechanism may be suitable for demonstrations or proof-of-concepts.
 
 ## IEEE 802.11u Interworking Information - Internet
 
@@ -317,25 +335,25 @@ It is possible that an SSID may be configured to provide unrestricted and unauth
 - internet bit = 1
 - ASRA bit = 0
 
-If such a network were discovered, a device could attempt to use the BRSKI well-known vendor cloud Registrar. Possibly this could be a default fall back mechanism that a device could use when determining which SSID to use.
+If such a network were discovered, a device could attempt to use the BRSKI well-known vendor cloud Registrar. Possibly this could be a default fall back mechanism that a device could use when determining which SSID to use. However, this mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device enrolling against an incorrect network. Additionally, this mechanism does not provide any information about local BRSKI support.
 
 ## Define New IEEE 802.11u Extensions
 
-Of the various elements currently defined by [IEEE802.11u] for potentially advertising BRSKI, NAI Realm and Roaming Consortium IE are the two existing options that are a closest fit, as outlined above. Another possibility that has been suggested in the IETF mailers is defining an extension to [IEEE802.11u] specifically for advertising BRSKI service capability. Any extensions should be included in Beacon and Probe Response frames so that devices can discover BRSKI capability without the additional overhead of having to explicitly query using ANQP.
+Of the various elements currently defined by [IEEE802.11u] for potentially advertising BRSKI, NAI Realm and Roaming Consortium IE are the two existing options that are a closest fit, as outlined above. Another possibility that has been suggested in the IETF mailers is defining an extension to [IEEE802.11u] specifically for advertising BRSKI service capability. Any extensions should be included in Beacon and Probe Response frames so that devices can discover BRSKI capability without the additional overhead of having to explicitly query using ANQP. ANQP queries could be used to provide additional information, such as vendor support.
 
 [IEEE802.11aq] appears to be the proposed mechanism for generically advertising any service capability, provided that service is registered with [IANA]. It is probably a better approach to encourage adoption of [IEEE802.11aq] and register a service name for BRSKI with [IANA] rather than attempt to define a completely new BRSKI-specific [IEEE802.11u] extension.
 
 ## Wi-Fi Protected Setup
 
-Wi-Fi Protected Setup (WPS) only works with Wi-Fi Protected Access (WPA) and WPA2 when in Personal Mode. WPS does not work when the network is in Enterprise Mode enforcing [IEEE802.1X] authentication. WPS is intended for consumer networks and does not address the security requirements of enterprise or IoT deployments. 
+Wi-Fi Protected Setup (WPS) only works with Wi-Fi Protected Access (WPA) and WPA2 when in Personal Mode. WPS does not work when the network is in Enterprise Mode enforcing [IEEE802.1X] authentication. WPS is intended for consumer networks and does not address the security requirements of enterprise or IoT deployments. Additionally, WPS relies on three methods (button push, PIN or NFC), none of which scale easily in an enterprise environement.
 
 ## Define and Advertise a BRSKI-specific AKM in RSNE
 
-[IEEE802.11i] introduced the RSNE element which allows an SSID to advertise multiple authentication mechanisms. A new Authentication and Key Management (AKM) Suite could be defined that indicates the STA can use BRSKI mechanisms to authenticate against the SSID. The authentication handshake could be an [IEEE802.1X] handshake, possibly leveraging an EAP-BRSKI mechanism, the key thing here is that a new AKM is defined and advertised to indicate the specific BRSKI-capable EAP method that is supported by [IEEE802.1X], as opposed to the current [IEEE802.1X] AKMs which give no indication of the supported EAP mechanisms. It is clear that such method would limit the SSID to BRSKI-supporting clients. This would require an additional SSID specifically for BRSKI clients.
+[IEEE802.11i] introduced the RSNE element which allows an SSID to advertise multiple authentication mechanisms. A new Authentication and Key Management (AKM) Suite could be defined that indicates the STA can use BRSKI mechanisms to authenticate against the SSID. The authentication handshake could be an [IEEE802.1X] handshake, possibly leveraging an EAP-BRSKI mechanism, the key thing here is that a new AKM is defined and advertised to indicate the specific BRSKI-capable EAP method that is supported by [IEEE802.1X], as opposed to the current [IEEE802.1X] AKMs which give no indication of the supported EAP mechanisms. It is clear that such method would limit the SSID to BRSKI-supporting clients. This would require an additional SSID specifically for BRSKI clients. As such, this solution also suffers from the limitations mentioned about additional overhead. Additionally, this mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device attempting to enroll against an incorrect network.
 
 ## Wi-Fi Device Provisioning Profile
 
-The [DPP] specification defines how an entity that is already trusted by a network can assist an untrusted entity in enrolling with the network. The description below assumes the [IEEE802.11] network is in infrastructure mode. DPP introduces multiple key roles including:
+The [DPP] specification, also known as Wi-Fi Easy Connect, defines how an entity that is already trusted by a network can assist an untrusted entity in enrolling with the network. The description below assumes the [IEEE802.11] network is in infrastructure mode. DPP introduces multiple key roles including:
 
 - Configurator: A logical entity that is already trusted by the network that has capabilities to enroll and provision devices called Enrollees. A Configurator may be a STA or an AP.
 
@@ -345,11 +363,49 @@ The [DPP] specification defines how an entity that is already trusted by a netwo
 
 - Responder: A logical entity that responds to the Initiator of the DPP Authentication Protocol. The Responder may be the Configurator or the Enrollee.
 
-In order to support a plug and play model for installation of devices, where the device is simply powered up for the first time and automatically discovers the network without the need for a helper or supervising application, for example an application running on a smart cell phone or tablet that performs the role of Configurator, then this implies that the AP must perform the role of the Configurator and the device or STA performs the role of Enrollee. Note that the AP may simply proxy DPP messages through to a backend WLC, but from the perspective of the device, the AP is the Configurator.
+In the DPP model, a common Configurator and Initiator is an app running on a trusted smartphone. This process is manual, and each device is treated individually. In order to support a plug and play model for installation of a large number devices, where each device is simply powered up for the first time and automatically discovers the Wi-Fi network without the need for a helper or supervising application, then this implies that the AP must perform the role of the Configurator and the device or STA performs the role of Enrollee. Note that the AP may simply proxy DPP messages through to a backend WLC, but from the perspective of the device, the AP is the Configurator.
 
 The DPP specification also mandates that the Initiator must be bootstrapped the bootstrapping public key of the Responder. For BRSKI purposes, the DPP bootstrapping public key will be the [IEEE802.1AR] IDevID of the device. As the boostrapping device cannot know in advance the bootstrapping public key of a specific operators network, this implies that the Configurator must take on the role of the Initiator. Therefore, the AP must take on the roles of both the Configurator and the Initiator.
 
-More details to be added...
+At boot time, the device does not know which AP or which SSID is likely to provide DPP services. In the DPP model, the Configurator advertizes a special Authentication and Key Management (AKM) mode, DPP. Announcing this mode outside of onboarding windows might result in regular, non-DPP clients to fail to associate to a network which AKM they do not recognize. As such, it is preferable that the DPP process be started after the device establishes a link with the access point. Therefore, DPP is likely not the best process to identify a supporting access point. Additionally, this mechanism suffers from the limitations outlined in {{incorrect-ssid-discovery}} - it does nothing to prevent a device attempting to enroll against an incorrect network.
+
+
+# Potential Mutual Validation Options
+
+When the bootstrapping device determines that one or more APs or SSIDs are available that provide support for BRSKI, with one or more of the mechanisms listed in section 3, then the device needs to determine which is the correct SSID. At the same time, an AP receiving signals from a bootstrapping device may need to verify if the need to determine if the device is attempting to connect the the correct network. In essence, this joint requirement means that BRSKi could be started immediately after the discovery phase. A case of mistaken identity (device attempting to join the wrong network) can be resolved with a round robin process, where the device fails the BRSKI process on the attempted network, then attempts BRSKi against the next candidate network. However, this process may result in wasted airtime and possible security exposure where an operator attempts to capture information about neighboring bootstrapping devices.
+
+## MAC Address Validation method
+
+An alternative to the round robin mode is a primary selection mode where the device and the AP exchange mutual signs of knowledge about each other. This could be achieved using the standard 802.11 process, where the device would send a probe request using its real MAC address. This MAC address could be known to a central database and validated by the wireless infrastructure. This method has the merit of being simple. However, it is more and more common for devices with simple network stacks to use locally administered (and temporal) MAC addresses. This method only validates the device (not the infrastructure).
+
+## Vendor Token Validation method
+
+An alternative to the MAC address method is to use a token, placed in an extension Information Element of the device probe request frame. This token would identify the device vendor. A limitation of this method is that, in some cases, neighboring networks may bootstrap devices from the same vendor. This method validates the vendor, but not the device. It also does not validate the infrastructure. It can be used as a coarse initial filtering mechanism.
+
+
+## Device Token Validation method
+
+
+An alternative to the vendor token is to use a unique identifier for the device. However, as the transaction is exposed to eavesdropping, this method exposes the toke. As such, the token should not be an element that can be compromised. The token can be the MAC address, if the device uses locally administered addresses for its probe requests. This method only validates the device (not the infrastructure).
+
+
+## Infrastructure Response Filtering
+
+
+When additional filtering is required, the infrastructure may validate the additiomal information provided by the device, and either respond, if the additional information is computed to match the infrastructure knowledge, or ignore the request (no probe response) if the additional information does not match the infrastructure knowledge. 
+
+In some cases, the AP may not be able to access the database locally, and may need to forward the request (including the additional information provided by the device) to another system. In this case, the AP may respond with a frame that includes a GAS comeback value. This value indicates a delay after which the device should ask the question again. In that interval, the AP will query the infrastructure to obtain the additional iformation required. After expiration of the comeback interval, the device may send the probe request again, and the AP may respond or ignore the request, or request more time. It is understood that the device would accept a limited number of comeback requests (for example 3) and a limited comeback interval (for example no more than 3 seconds).
+
+
+## Infrastructure Validation Method
+
+
+It is expected, when the device adds information to its probe request, that the infrastructure should only respond to those devices that have been validated by the infrastructure system. However, some systems may not be able to respond in time and may be configured to accept all requests. Additionally, bad actors may decide to accept any request. There may therefore be a need to mandate the infrastructure to return information that indicates proof of knowledge of the device. The following modes are envisioned:
+
+- When the device uses its MAC address, or expresses its MAC address in an information element contained in the probe request, the infrastructure may be able to express its knowledge of the device servial number, and mention this serial number in the probe response. As it may be needed to protect the serial number at this stage, the serial number could be encoded in a bloom filter.
+
+- When the device uses a vendor token, the AP can only reply with another token identifying the same vendor, as the device itself is not known. 
+
 
 # Potential Authentication Options
 
@@ -364,11 +420,15 @@ The authentication options outlined in this document include:
 
 - Unauthenticated Pre-BRSKI and EAP-TLS Post-BRSKI
 
+- DPP Pre-BRSKI and EAP-TLS Post-BRSKI
+
 - PSK or SAE Pre-BRSKI and EAP-TLS Post-BRSKI
 
 - MAC Address Bypass Pre-BRSKI and EAP-TLS Post-BRSKI
 
 - EAP-TLS Pre-BRSKI and EAP-TLS Post-BRSKI
+
+- New DPP BRSKI mechanism
 
 - New TEAP BRSKI mechanism
 
@@ -380,15 +440,23 @@ These mechanisms are described in more detail in the following sections. Note th
 
 When evaluating the multiple authentication options outlined below, care and consideration must be given to the complexity of the software state machine required in both devices and services for implementation.
 
-## Unauthenticated Pre-BRSKI and EAP-TLS Post-BRSKI
+## Unauthenticated and Unencrypted or OWE Pre-BRSKI and EAP-TLS Post-BRSKI
 
 The device connects to an unauthenticated network pre-BRSKI. The device connects to a network enforcing EAP-TLS post-BRSKI. The device uses its LDevID as the post-BRSKI EAP-TLS credential.
 
-To be completed..
+In the pre-BRSKI phase, the device may establish a secure connection with the AP using WPA3 to protect the BRSKI exchange from eavesdroppers. The pre-BRSKi phase can be protected, but is not authenticated.
+
+## DPP Pre-BRSKI and EAP-TLS post-BRSKI
+
+The device can be provisioned with DPP for the pre-BRSKI phase, receiving the SSID value and optionally a temporal PSK. It should be noted that the device at that point is not untampered anymore. However, the configuration is temporal and limited.
+In a WPA3 network, when DPP from a mobile (e.g. smartphone) is used, the DPP process may provision the SSID and leave the device to use OWE for its connection to the AP.
+
+Alternatively, when DPP is processed through the AP in an automated fashion, the AP first establishes an OWE connection with the device. Through this encrypted connection, the AP provides the SSID and the temporal PSK value.
+
 
 ## PSK or SAE Pre-BRSKI and EAP-TLS Post-BRSKI
 
-The device connects to a network enforcing PSK pre-BRSKI. The mechanism by which the PSK is provisioned on the device for pre-BRSKI authentication is out-of-scope of this version of this document. The device connects to a network enforcing EAP-TLS post-BRSKI. The device uses the LDevID obtained via BRSKI as the post-BRSKI EAP-TLS credential.
+The device connects to a network enforcing PSK pre-BRSKI. If DPP is not used, the PSK may be factory-set (default PSK) or provisioned by direct action on the device. Neither of these modes is preferred as factory-defauls are weak and direct interaction with the device does not allow for massive automated bootstrapping. After the PSK-based pre-BRSKI connection, the device connects to a network enforcing EAP-TLS post-BRSKI. The device uses the LDevID obtained via BRSKI as the post-BRSKI EAP-TLS credential.
 
 When the device connects to the post-BRSKI network that is enforcing EAP-TLS, the device uses its LDevID as its credential. The device should verify the certificate presented by the server during that EAP-TLS exchange against the trusted CA list it obtained during BRSKI.
 
@@ -402,11 +470,21 @@ Many AAA server state machine logic allows for the network to fallback to MAC Ad
 
 The device connects to a network enforcing EAP-TLS pre-BRSKI. The device uses its IDevID as the pre-BRSKI EAP-TLS credential. The device connects to a network enforcing  EAP-TLS post-BRSKI. The device uses its LDevID as the post-BRSKI EAP-TLS credential.
 
-When the device connects to a pre-BRSKI network that is enforcing EAP-TLS, the device uses its IDevID as its credential. The deivce should not attempt to verify the certificate presented by the server during that EAP-TLS exchange, as it has not yet discovered the local domain trusted CA list.
+When the device connects to a pre-BRSKI network that is enforcing EAP-TLS, the device uses its IDevID as its credential. The device should not attempt to verify the certificate presented by the server during that EAP-TLS exchange, as it has not yet discovered the local domain trusted CA list.
 
 When the device connects to the post-BRSKI network that is enforcing EAP-TLS, the device uses its LDevID as its credential. The device should verify the certificate presented by the server during that EAP-TLS exchange against the trusted CA list it obtained during BRSKI.
 
 Again, if the post-BRSKI network enforces a tunneled EAP method, the mechanism by which that second credential is provisioned on the device is out-of-scope of this version of this document.
+
+## New DPP BRSKI mechanism
+
+BRSKI can be integrated into the DPP choreography, in three modes:
+
+- When a local commissioning tool is used (e.g. application on a mobile device), the standard DPP process is used for the configurator to establish a trusted connection to the enrolee (the bootstrapping device), over Bluetoot, NFC, Wi-Fi or other means defined by DPP. The configurator then provision the boostrapping device with the target SSID, but also installs on the device the TrustAnchor. The bootstrapping device then connects to the target SSID using EAP-BRSKI (EST). The query is relayed to the registrar, which validates the device identity. An EAP-Success message is then returned to the access point.
+
+- When the commissioning tool is not mobile and not interacting directly with the bootstrapping device, identifiers for the device may be fed into an authentication database (e.g. serial number, MAC address, DPP key, device-specific factory-set PSK or other). Upon device request (probe request with request for network proof of knowledge), the AP retrieves one or more of these parameters from the authentication database, and uses them to provide proof of knowledge to the device. Once trust is established, a temporal trusted link is established between the device and the AP (using DPP parameters or OWE) and the AP provisions the device with the SSID. The device then connects to the target SSID using EAP-BRSKI as above.
+
+- When the authentication server has reachability to the MASA server, the process above is started. As the device conencst to the target SSID, its identity is not only validated by the authentication server, but the authentication server also initiates a voucher request to the MASA server. The exchange between the bootstrapping device and the authentication server, now in possession of the voucher, continues as per {{?I-D.ietf-anima-bootstrapping-keyinfra}}.
 
 ## New TEAP BRSKI mechanism
 
@@ -491,11 +569,35 @@ The high level flow would be something like:
 
 # IANA Considerations
 
-[[ TODO ]]
+This document has no IANA actions.
 
 # Security Considerations
 
-[[ TODO ]]
+The mechanisms described in this document rely on BRSKI. As such, the same security considerations are applicable to this document as they are in {{?I-D.ietf-anima-bootstrapping-keyinfra}}.
+
+Additionally, the Wireless LAN presents a unique DOS attack vector, as endpoints contend for the shared medium on a completely egalitarian basis with the AP. This means that any wireless device could potentially monopolize the air by constantly sending frames. This would prevent the bootstrapping device, or the infrastrcuture, to complete their exchange and would make the BRSKI process fail. This risk is inherent to the nature of 802.11 transmissions, and can only be mitigated by physical access control to the cell area. Such attack is also easily detected. 
+
+Also, initial exchanges between the bootstrapping device and the AP are not protected. Whenever a unicast communication is initiated between a bootstrapping device and an AP in an attempt to start active bootstrapping or provisioning, the link should first be protected whenever possible, for example with OWE.   
+
+
+## Client side exposure
+
+The discovery mechanism imposes that the bootstrapping device and the infrastructure must exchange messages to be aware of each other's existence. If these messages are generic, then the bootstrapping device has no mechanism to distinguish the correct SSID from a neighboring SSID. The bootstrapping device then is faced with two options:
+
+- Try all possible SSIDs in a round-robin fashion. By doing so, the bootstrapping device will potentially expose parameters to the wrong SSID and infrastructure. Although such exposure is unlikely tor esult in device compromission, it will still expose unnecessarily device parameters to the wrong network. As such, it is recommended that a pre-BRSKI filtering mechanism be implemented to avoid this exposure, conducting the bootstrapping device to only start the BRSKI process with an SSID that has been confirmed to be a likely correct candidate.
+
+
+- When the boostrapping device attempts to proceed to an SSID filtering, it may need to expose parameters to allow for the infrastructure to respond and provide a proof of knowledge. If this mechanism is implemented, the bootstrapping device should only expose information that is not sufficient to acquire complete knwledge of the bootstrapping device. For example, the bootstrapping device should not send both its serial number and MAC address, but should only expose an element that has low security value (such as a MAC address), and only in scenarios where the infrastructure has to respond with another element that will confirm to the bootstrapping device that it is communicating with the correct infrastructure.
+
+
+
+## Infrastructure side exposure
+
+The general choreography of 802.11 networks imply that the infrastructure advertizes capabilities and support for specific features through beacons and probe responses. As such, the AP is likely to have to expose its support for BRSKI. This exposure is not a security concern.
+
+When the infrastructure is requested to provide bre-BRSKI proof of knowledge, it has to process a frame received from an unknown candidate device and either respond (if the device is found to be known), delay the response (if additional processing is needed) or ignore the request. Each of these behaviors may be tested by a rogue device in an attempt to gain information about the wireless infrastructure. It is therefore recommended that the proof of knowledge test should only focus on parameters specific to a particular device, and not to parameters generally applicable to multiple devices (for example parameters that would apply to multiple devices of one or more vendors).
+
+
 
 --- back
 
